@@ -1,0 +1,77 @@
+version: "3.8"
+services:
+
+    # PHP Service
+    app-test:
+        build:
+            context: .
+            args:
+                - APP_ENV=${APP_ENV}
+        environment:
+            - APP_ENV=${APP_ENV}
+            - CONTAINER_ROLE=app
+        working_dir: /var/www
+        volumes:
+            - ./:/var/www
+        ports:
+            - 9000:80
+        depends_on:
+            - db
+            - redis
+    
+    # Database Server
+    db:
+        image: mysql:8.0
+       
+        environment:
+            - MYSQL_DATABASE=${DB_DATABASE}
+            - MYSQL_USER=${DB_USERNAME}
+            - MYSQL_PASSWORD=${DB_PASSWORD}
+            - MYSQL_ROOT_PASSWORD=${DB_PASSWORD}
+        volumes:
+            - db-data:/var/lib/mysql   
+    # PHP Service
+    websocket:
+        build:
+            context: .
+            args:
+                - APP_ENV=${APP_ENV}
+        environment:
+            - APP_ENV=${APP_ENV}
+            - CONTAINER_ROLE=websocket
+        working_dir: /var/www
+        volumes:
+            - ./:/var/www
+        ports:
+            - 6001:6001
+        depends_on:
+            - db
+            - redis  
+    # Redis Server
+    redis:
+      image: redis:alpine
+      command: redis-server --appendonly yes --requirepass  "${REDIS_PASSWORD}"
+      ports:
+          - 6370:6370
+    webserver:
+      image: nginx:alpine
+      container_name: webserver
+      restart: unless-stopped
+      ports:
+        - "8989:80"
+        - "443:443"
+      links:
+        - app-test
+      depends_on:
+        - app-test
+      volumes:
+        - ./:/var/www       
+        - ./nginx/conf.d/:/etc/nginx/config.d/
+
+      networks:
+        - backend
+networks:
+  backend:  
+    driver: bridge
+volumes:
+    db-data: ~
