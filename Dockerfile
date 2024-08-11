@@ -12,6 +12,7 @@ RUN apt-get update && apt-get install -y \
     unzip \
     curl \
     libonig-dev \ 
+    supervisor \
     git 
 
 
@@ -21,7 +22,6 @@ RUN curl -sL https://deb.nodesource.com/setup_18.x | bash - \
 
 # Install Composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
-
 
 # Configure and install GD extension
 RUN docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp --with-xpm \
@@ -44,6 +44,19 @@ RUN docker-php-ext-install -j$(nproc) bcmath
 
 # Clean up
 RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /usr/share/doc/*
+
+
+# Add Supervisor config file
+# COPY ./supervisor.conf /etc/supervisor/conf.d/laravel-worker.conf
+
+# Set file permissions
+RUN chown -R www-data:www-data /var/www \
+    && chmod -R 755 /var/www
+
+# Copy Supervisor configuration
+COPY ./supervisor /etc/supervisor/conf.d/
+
+
 
 # Copy application code
 COPY . /var/www

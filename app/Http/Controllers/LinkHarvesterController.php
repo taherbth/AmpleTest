@@ -32,7 +32,7 @@ class LinkHarvesterController extends Controller
         // Make the inputs as a single entries by new line
         $domain_names = preg_split('/\r\n|\r|\n/', $request->domain_name);
         // Dispatch the job to process the data
-        ProcessDomainUrls::dispatch($domain_names);        
+        ProcessDomainUrls::dispatch($domain_names, auth()->user()->id);        
     }  
 
     /**

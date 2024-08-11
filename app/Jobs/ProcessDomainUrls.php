@@ -1,5 +1,6 @@
 <?php
 namespace App\Jobs;
+use App\Models\BaseDomain;
 use App\Models\DomainUrl;
 use App\Jobs\ProcessDomainUrls;
 use Illuminate\Bus\Queueable;
@@ -13,6 +14,7 @@ class ProcessDomainUrls implements ShouldQueue
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     protected $domain_names;
+    protected $userId;
 
     /**
      * Create a new job instance.
@@ -20,9 +22,10 @@ class ProcessDomainUrls implements ShouldQueue
      * @param array $domain_names
      * @return void
      */
-    public function __construct(array $domain_names)
+    public function __construct($domain_names, $userId)
     {
         $this->domain_names = $domain_names;
+        $this->userId = $userId;
     }
 
     /**
@@ -32,18 +35,22 @@ class ProcessDomainUrls implements ShouldQueue
      */
     public function handle()
     {        
+          // Log the incoming data for debugging
+        \Log::info('Processing job with data:', ['user_id' => $this->userId]);
         // Store each entry as a separate record in the database
         if(!empty($this->domain_names)){
             foreach ($this->domain_names as $each_domain) {              
                 if (!empty($each_domain)) {
                     $base_domain =  $this->getBaseDomain($each_domain); 
                     // Check if the base-domain already exists
-                    $domain_created = BaseDomain::firstOrCreate(['domain_name' => $base_domain, 'user_id' => auth()->user()->id]);
+                    $domain_created = BaseDomain::firstOrCreate(['domain_name' => $base_domain, 'user_id' => $this->userId]);
                     // Check if the domain-url already exists
                     $domain_url_created = DomainUrl::firstOrCreate(['domain_url_name' => $each_domain, 'base_domain_id' => $domain_created->id]);
                 }
             }
         }
+        // Log success
+        \Log::info('Data saved to database.');
     }
     function getBaseDomain($url) {
         // Parse the URL and get the host part
