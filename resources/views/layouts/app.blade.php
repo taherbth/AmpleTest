@@ -11,10 +11,19 @@
     <!-- Alpine.js -->
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.21/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.21/css/dataTables.bootstrap4.min.css">
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.21/js/dataTables.bootstrap4.min.js"></script>
+
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body>
+<body>    
     <div id="app">
+        <!-- BEGIN SIDEBPANEL-->
+        @include('partials/sidebar')
+        <!-- END SIDEBAR -->
         @yield('content')
     </div>
 

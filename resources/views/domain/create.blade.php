@@ -1,6 +1,15 @@
 @extends('layouts.app')
 
 @section('content')
+<div x-data="{ message: '' }" x-init="
+    Echo.channel('data-processed')
+        .listen('.data.processed', (e) => {
+            message = 'Data processed successfully for user ID: ' + e.userId;
+        });
+">
+    <div x-show="message" class="alert alert-success" x-text="message"></div>
+</div>
+
 <div class="container mt-5" x-data="{ name: '', domain_name: '' }">
     @if(session('success'))
         <div class="alert alert-success">
@@ -31,3 +40,4 @@
     </form>
 </div>
 @endsection
+ 

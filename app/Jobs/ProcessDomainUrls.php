@@ -8,6 +8,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Log;
 
 class ProcessDomainUrls implements ShouldQueue
 {
@@ -47,10 +48,15 @@ class ProcessDomainUrls implements ShouldQueue
                     // Check if the domain-url already exists
                     $domain_url_created = DomainUrl::firstOrCreate(['domain_url_name' => $each_domain, 'base_domain_id' => $domain_created->id]);
                 }
+                // Log success or failure
+                if ($domain_created) {
+                    Log::info('Data saved successfully for user ID: ', ['user_id' => $this->userId]);
+                    event(new DataProcessedSuccessfully($this->userId));
+                } else {
+                    Log::error('Failed to save data for user ID: ', ['user_id' => $this->userId]);
+                }
             }
-        }
-        // Log success
-        \Log::info('Data saved to database.');
+        }        
     }
     function getBaseDomain($url) {
         // Parse the URL and get the host part

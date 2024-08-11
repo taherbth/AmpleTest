@@ -21,6 +21,7 @@ Route::middleware('guest')->group(function () {
 Route::middleware('auth')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::resource('domains', LinkHarvesterController::class);
+    Route::get('get-domain-urls', [LinkHarvesterController::class, 'getDomainUrls'])->name('domains.getDomainUrls');
     Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 });
 

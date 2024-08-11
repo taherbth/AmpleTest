@@ -67,8 +67,14 @@ WORKDIR /var/www
 # Install PHP dependencies
 RUN composer install
 
+RUN composer require yajra/laravel-datatables-oracle
+
+
 # Install npm dependencies
 RUN npm install
+
+RUN npm install laravel-echo pusher-js --save
+
 
 # Install Redis extension
 RUN pecl install redis \
