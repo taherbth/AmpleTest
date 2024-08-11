@@ -1,12 +1,26 @@
 <?php
+use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\LinkHarvesterController;
 
-use Illuminate\Support\Facades\Route;
-use App\Models\User;
-
-Route::get('/', function () {
-    return view('welcome');
+Route::name('test')->get('test', function(){
+    dd(bcrypt('123456'));
 });
 
-Route::get('/test', function () {    
-    dd( App\Models\User::all());
+Route::get('/home', function () {
+    return view('home');
+})->name('home')->middleware('auth');
+
+
+Route::middleware('guest')->group(function () {
+    Route::get('/', [LoginController::class, 'showLoginForm'])->name('login');
+    Route::post('/login', [LoginController::class, 'login']);
+
 });
+
+Route::middleware('auth')->group(function () {
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::resource('domains', LinkHarvesterController::class);
+    Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
+});
+

@@ -13,7 +13,15 @@ RUN apt-get update && apt-get install -y \
     curl \
     libonig-dev \ 
     git 
-    
+
+
+# Install Node.js and npm
+RUN curl -sL https://deb.nodesource.com/setup_18.x | bash - \
+    && apt-get install -y nodejs
+
+# Install Composer
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+
 
 # Configure and install GD extension
 RUN docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp --with-xpm \
@@ -42,6 +50,17 @@ COPY . /var/www
 
 # Set working directory
 WORKDIR /var/www
+
+# Install PHP dependencies
+RUN composer install
+
+# Install npm dependencies
+RUN npm install
+
+# Install Redis extension
+RUN pecl install redis \
+    && docker-php-ext-enable redis
+RUN composer require predis/predis
 
 # Expose port 9000 and start php-fpm server
 EXPOSE 9000
