@@ -1,7 +1,7 @@
 <p align="center" style="font-size: 25px; font-weight: bold">Link Harvester Apps </p>
 
 <p align="center" style="font-size: 25px; font-weight: bold"> ----------------------------  SETUP  Instruction --------------------------------- </p>
-
+<p align="center" style="font-size: 25px; font-weight: bold"> Take a pull from master branch </p>
 1. sudo docker system prune -a
 2. sudo docker-compose down --remove-orphans
 3. sudo docker network create app-network
