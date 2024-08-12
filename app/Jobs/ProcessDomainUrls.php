@@ -51,7 +51,7 @@ class ProcessDomainUrls implements ShouldQueue
                 // Log success or failure
                 if ($domain_created) {
                     Log::info('Data saved successfully for user ID: ', ['user_id' => $this->userId]);
-                    event(new DataProcessedSuccessfully($this->userId));
+                    // event(new DataProcessedSuccessfully($this->userId));
                 } else {
                     Log::error('Failed to save data for user ID: ', ['user_id' => $this->userId]);
                 }
