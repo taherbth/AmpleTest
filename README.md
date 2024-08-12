@@ -1,13 +1,7 @@
-<p align="center" style="font-size: 18px; font-weight: bold">Link Harvester Apps </p>
+<p align="center" style="font-size: 25px; font-weight: bold">Link Harvester Apps </p>
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+<p align="center" style="font-size: 25px; font-weight: bold"> ----------------------------  SETUP  Instruction --------------------------------- </p>
 
-----------------------------  SETUP  Instruction ---------------------------------
 1. sudo docker system prune -a
 2. sudo docker-compose down --remove-orphans
 3. sudo docker network create app-network
