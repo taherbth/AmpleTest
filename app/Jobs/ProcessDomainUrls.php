@@ -9,6 +9,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
+use DB;
 
 class ProcessDomainUrls implements ShouldQueue
 {
@@ -36,27 +37,51 @@ class ProcessDomainUrls implements ShouldQueue
      */
     public function handle()
     {        
-          // Log the incoming data for debugging
-        \Log::info('Processing job with data:', ['user_id' => $this->userId]);
+        Log::info('Testing the sites...');
+        // Normalize newlines and split into lines
+        $lines = preg_split('/\r\n|\r|\n/', $this->domain_names, -1, PREG_SPLIT_NO_EMPTY);
+
+        // Log the content of $lines for debugging
+        Log::info('Lines After Splitting:', ['lines' => $lines]);
+
+        // Ensure $lines is an array
+        if (!is_array($lines)) {
+            Log::error('Error: $lines is not an array.', ['lines' => $lines]);
+            return; // or throw an exception if needed
+        }
+
+        // Prepare data for insertion
+        $data = array_map(fn($line) => ['domain_name' => $this->getBaseDomain(trim($line)), 'user_id' => $this->userId], $lines);
+
+        // Log the prepared data
+        Log::info('Prepared Data for Insert:', ['data' => $data]);
+        
+
+        DB::transaction(function () use ($data) {
+            BaseDomain::insert($data);
+        });
+
+
+        // $domain_created = BaseDomain::firstOrCreate($data);
         // Store each entry as a separate record in the database
-        if(!empty($this->domain_names)){
-            foreach ($this->domain_names as $each_domain) {              
-                if (!empty($each_domain)) {
-                    $base_domain =  $this->getBaseDomain($each_domain); 
-                    // Check if the base-domain already exists
-                    $domain_created = BaseDomain::firstOrCreate(['domain_name' => $base_domain, 'user_id' => $this->userId]);
-                    // Check if the domain-url already exists
-                    $domain_url_created = DomainUrl::firstOrCreate(['domain_url_name' => $each_domain, 'base_domain_id' => $domain_created->id]);
-                }
-                // Log success or failure
-                if ($domain_created) {
-                    Log::info('Data saved successfully for user ID: ', ['user_id' => $this->userId]);
-                    // event(new DataProcessedSuccessfully($this->userId));
-                } else {
-                    Log::error('Failed to save data for user ID: ', ['user_id' => $this->userId]);
-                }
-            }
-        }        
+        // if(!empty($this->domain_names)){
+        //     foreach ($this->domain_names as $each_domain) {              
+        //         if (!empty($each_domain)) {
+        //             $base_domain =  $this->getBaseDomain($each_domain); 
+        //             // Check if the base-domain already exists
+        //             $domain_created = BaseDomain::firstOrCreate(['domain_name' => $base_domain, 'user_id' => $this->userId]);
+        //             // Check if the domain-url already exists
+        //             $domain_url_created = DomainUrl::firstOrCreate(['domain_url_name' => $each_domain, 'base_domain_id' => $domain_created->id]);
+        //         }
+        //         // Log success or failure
+        //         if ($domain_created) {
+        //             Log::info('Data saved successfully for user ID: ', ['user_id' => $this->userId]);
+        //             // event(new DataProcessedSuccessfully($this->userId));
+        //         } else {
+        //             Log::error('Failed to save data for user ID: ', ['user_id' => $this->userId]);
+        //         }
+        //     }
+        // }        
     }
     function getBaseDomain($url) {
         // Parse the URL and get the host part

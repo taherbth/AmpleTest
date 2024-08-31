@@ -6,6 +6,7 @@ use App\Models\BaseDomain;
 use App\Models\DomainUrl;
 use App\Jobs\ProcessDomainUrls;
 use Yajra\DataTables\DataTables;
+use Illuminate\Support\Facades\Log;
 
 
 class LinkHarvesterController extends Controller
@@ -66,7 +67,15 @@ class LinkHarvesterController extends Controller
     public function store(Request $request)
     {
         // Make the inputs as a single entries by new line
-        $domain_names = preg_split('/\r\n|\r|\n/', $request->domain_name);
+        //$domain_names = preg_split('/\r\n|\r|\n/', $request->domain_name);
+
+        // Validate the input
+        $request->validate([
+            'domain_name' => 'required|string',
+        ]);
+
+        $domain_names = $request->input('domain_name');
+
         // Dispatch the job to process the data
         try{
             ProcessDomainUrls::dispatch($domain_names, auth()->user()->id);               
