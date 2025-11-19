@@ -4,7 +4,7 @@
 <p align="center" style="font-size: 25px; font-weight: bold"> Take a pull from master branch </p>
 
 1. sudo docker system prune -a
-2. sudo docker-compose down --remove-orphans
+2. sudo docker compose down --remove-orphans
 3. sudo docker network create app-network
 4. sudo docker compose up -d --build
 5. sudo docker exec -it laravel-db mysql -u taher -p
