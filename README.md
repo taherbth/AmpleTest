@@ -6,7 +6,7 @@
 1. sudo docker system prune -a
 2. sudo docker-compose down --remove-orphans
 3. sudo docker network create app-network
-4. sudo docker-compose up --build -d
+4. sudo docker compose up -d --build
 5. sudo docker exec -it laravel-db mysql -u taher -p
 	THEN inside mysql run : CREATE DATABASE IF NOT EXISTS Link_Harvester;
 6. sudo docker exec -it my-laravel-app bash
