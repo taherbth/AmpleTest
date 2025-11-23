@@ -12,7 +12,8 @@
 6. sudo docker exec -it my-laravel-app bash
 	THEN move to dir: cd /var/www and run: php artisan migrate:refresh
           AND php artisan db:seed
-7. sudo docker exec -it my-laravel-app bash
+7. docker exec -it my-laravel-app php artisan db:seed
+8. sudo docker exec -it my-laravel-app bash
           THEN run below comands:
  	chmod -R 755 /etc/supervisor/
 	chown -R root:root /etc/supervisor/
